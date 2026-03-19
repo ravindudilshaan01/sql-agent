@@ -38,19 +38,46 @@ st.markdown("""
     .stButton>button {
         width: 100%;
         border-radius: 12px;
-        height: 48px;
+        height: 52px;
         background-color: #667eea;
         color: white;
         border: none;
-        font-weight: 500;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        font-weight: 600;
+        font-size: 1.1rem;
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         transition: all 0.3s ease;
     }
     .stButton>button:hover {
         background-color: #5a6fd8;
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
-        transform: translateY(-2px);
-        border: none;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        transform: translateY(-3px);
+    }
+    /* Primary button styling for active tabs */
+    button[kind="primaryFormSubmit"] {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        border: 2px solid #764ba2 !important;
+        font-weight: 700 !important;
+        font-size: 1.2rem !important;
+        height: 56px !important;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5) !important;
+    }
+    button[kind="primaryFormSubmit"]:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%) !important;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.7) !important;
+        transform: translateY(-4px) !important;
+    }
+    /* Secondary button styling for inactive tabs */
+    button[kind="secondaryFormSubmit"] {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        color: #e0e0e0 !important;
+        font-weight: 500 !important;
+        height: 50px !important;
+    }
+    button[kind="secondaryFormSubmit"]:hover {
+        background-color: rgba(255, 255, 255, 0.2) !important;
+        border-color: #667eea !important;
+        color: white !important;
     }
     div[data-testid="stMetric"] {
         background-color: #667eea;
@@ -71,19 +98,6 @@ st.markdown("""
         border-radius: 10px;
         border-left: 4px solid #667eea;
         margin: 1rem 0;
-    }
-    .stTabs [data-baseweb="tab-list"] {
-        background-color: rgba(255, 255, 255, 0.05);
-        border-radius: 8px;
-        padding: 0.5rem;
-    }
-    .stTabs [data-baseweb="tab"] {
-        color: #e0e0e0;
-        background-color: transparent;
-    }
-    .stTabs [aria-selected="true"] {
-        background-color: #667eea;
-        color: white;
     }
     .element-container {
         color: #e0e0e0;
@@ -153,17 +167,40 @@ with col2:
         st.metric("Questions", q_count)
 
 # Modern tabs for source selection
-tab1, tab2, tab3 = st.tabs(["📦 Demo", "📤 Upload", "🔗 URL"])
+st.markdown("### Choose Your Data Source")
+
+col_demo, col_upload, col_url = st.columns(3)
+
+# Initialize session state for active tab
+if "active_tab" not in st.session_state:
+    st.session_state.active_tab = "demo"
+
+with col_demo:
+    if st.button("📦 Demo Database", key="demo_btn",
+                type="primary" if st.session_state.active_tab == "demo" else "secondary"):
+        st.session_state.active_tab = "demo"
+
+with col_upload:
+    if st.button("📤 Upload File", key="upload_btn",
+                type="primary" if st.session_state.active_tab == "upload" else "secondary"):
+        st.session_state.active_tab = "upload"
+
+with col_url:
+    if st.button("🔗 Database URL", key="url_btn",
+                type="primary" if st.session_state.active_tab == "url" else "secondary"):
+        st.session_state.active_tab = "url"
+
+st.markdown("---")
 
 db_uri = None
 uploaded_file = None
 
-with tab1:
-    st.success("Sample shop database loaded")
+if st.session_state.active_tab == "demo":
+    st.success("✅ Sample shop database loaded and ready to query!")
     db_uri = "sqlite:///shop.db"
     source = "demo"
 
-    st.markdown("#### Try These Questions")
+    st.markdown("#### 🚀 Try These Questions")
     col1, col2, col3 = st.columns(3)
 
     example_questions = [
@@ -181,31 +218,35 @@ with tab1:
             if st.button(question, key=f"q_{i}"):
                 st.session_state.example_clicked = question
 
-with tab2:
+elif st.session_state.active_tab == "upload":
+    st.markdown("#### 📋 Upload Your Data")
     uploaded_file = st.file_uploader(
-        "Upload Database or CSV",
+        "Choose a database or CSV file",
         type=["db", "csv"],
-        label_visibility="collapsed"
+        help="Upload a SQLite database (.db) or CSV file to analyze"
     )
     if uploaded_file:
         db_uri = get_db_uri("upload", uploaded_file)
         source = "upload"
-        st.success(f"Loaded: **{uploaded_file.name}**")
+        st.success(f"✅ Successfully loaded: **{uploaded_file.name}**")
+        st.info("💬 Now you can ask questions about your uploaded data!")
     else:
-        st.info("Drop your file here")
+        st.info("📁 Drag and drop your file here or click to browse")
 
-with tab3:
+elif st.session_state.active_tab == "url":
+    st.markdown("#### 🌐 Connect to Database")
     url_input = st.text_input(
-        "Database Connection URL",
+        "Database Connection String",
         placeholder="sqlite:///mydb.db or postgresql://user:pass@host/db",
-        label_visibility="collapsed"
+        help="Enter a valid database connection URL"
     )
     if url_input:
         db_uri = url_input
         source = "url"
-        st.success("Connected")
+        st.success("✅ Database connection configured")
+        st.info("💬 Ready to query your remote database!")
     else:
-        st.info("Enter connection string")
+        st.info("🔗 Enter your database connection URL above")
 
 st.markdown("---")
 
