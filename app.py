@@ -12,6 +12,12 @@ st.set_page_config(
 # Modern CSS
 st.markdown("""
 <style>
+    .main {
+        background-color: #434E78;
+    }
+    .stApp {
+        background-color: #434E78;
+    }
     .main-header {
         font-size: 2.5rem;
         font-weight: 700;
@@ -21,9 +27,12 @@ st.markdown("""
         margin-bottom: 0.3rem;
     }
     .sub-header {
-        color: #666;
+        color: #e0e0e0;
         font-size: 1rem;
         margin-bottom: 2.5rem;
+    }
+    h4 {
+        color: #ffffff;
     }
     .stButton>button {
         width: 100%;
@@ -51,11 +60,34 @@ st.markdown("""
         color: white !important;
     }
     .info-box {
-        background: #f8f9fa;
+        background: rgba(255, 255, 255, 0.1);
         padding: 1.5rem;
         border-radius: 10px;
         border-left: 4px solid #667eea;
         margin: 1rem 0;
+    }
+    .stTabs [data-baseweb="tab-list"] {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 0.5rem;
+    }
+    .stTabs [data-baseweb="tab"] {
+        color: #e0e0e0;
+        background-color: transparent;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: rgba(102, 126, 234, 0.3);
+        color: white;
+    }
+    .element-container {
+        color: #e0e0e0;
+    }
+    p, .stMarkdown {
+        color: #e0e0e0;
+    }
+    .stChatMessage {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
     }
 </style>
 """, unsafe_allow_html=True)
