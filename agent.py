@@ -1,10 +1,15 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain_community.utilities import SQLDatabase
 from langchain_community.tools.sql_database.tool import QuerySQLDataBaseTool
 
 load_dotenv()
+
+# Auto-create the database if it doesn't exist
+if not Path("shop.db").exists():
+    import create_db
 
 llm = ChatGroq(
     model="llama-3.3-70b-versatile",
