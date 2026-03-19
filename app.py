@@ -19,6 +19,21 @@ st.markdown("""
     header {visibility: hidden;}
     .stDeployButton {display: none;}
 
+    /* Force sidebar to always be visible and expanded */
+    section[data-testid="stSidebar"] {
+        display: block !important;
+        visibility: visible !important;
+        width: 260px !important;
+        min-width: 260px !important;
+        transform: none !important;
+        margin-left: 0 !important;
+    }
+
+    /* Hide sidebar toggle button */
+    button[kind="header"] {
+        display: none !important;
+    }
+
     /* App layout - sidebar + main */
     .stApp {
         background-color: #0E1117;
@@ -31,8 +46,8 @@ st.markdown("""
         background-color: #0E1117;
     }
 
-    /* SIDEBAR - 260px wide, light theme */
-    .css-1d391kg {
+    /* SIDEBAR - 260px wide, light theme - Updated selectors */
+    .css-1d391kg, .css-1cypcdb, .css-17eq0hr, .css-1544g2n, section[data-testid="stSidebar"] {
         width: 260px !important;
         min-width: 260px !important;
         max-width: 260px !important;
@@ -43,6 +58,20 @@ st.markdown("""
         flex-direction: column !important;
         overflow-y: auto !important;
         height: 100vh !important;
+    }
+
+    /* Force sidebar visibility */
+    section[data-testid="stSidebar"] > div {
+        background-color: #F0F2F6 !important;
+        width: 260px !important;
+        min-width: 260px !important;
+        max-width: 260px !important;
+    }
+
+    /* Ensure sidebar container is visible */
+    .css-1cypcdb, .css-17eq0hr, .css-1544g2n {
+        background: #F0F2F6 !important;
+        border-right: 1px solid #E0E0E0 !important;
     }
 
     /* Zone 1 - Sidebar Header */
@@ -99,14 +128,16 @@ st.markdown("""
     }
 
     /* Zone 2 - Radio buttons */
-    .stRadio > div {
+    .stRadio > div,
+    section[data-testid="stSidebar"] .stRadio > div {
         background: transparent !important;
         border: none !important;
         padding: 0 !important;
         gap: 8px !important;
     }
 
-    .stRadio label {
+    .stRadio label,
+    section[data-testid="stSidebar"] .stRadio label {
         font-size: 13px !important;
         color: #111827 !important;
         font-weight: 400 !important;
@@ -114,7 +145,8 @@ st.markdown("""
         align-items: center !important;
     }
 
-    .stRadio label:has(input:checked) {
+    .stRadio label:has(input:checked),
+    section[data-testid="stSidebar"] .stRadio label:has(input:checked) {
         font-weight: 500 !important;
     }
 
@@ -296,7 +328,8 @@ st.markdown("""
         border-top: 1px solid #E0E0E0;
     }
 
-    .clear-section .stButton > button {
+    .clear-section .stButton > button,
+    section[data-testid="stSidebar"] .clear-section .stButton > button {
         width: 100% !important;
         height: 34px !important;
         background: transparent !important;
@@ -306,8 +339,48 @@ st.markdown("""
         color: #6B7280 !important;
     }
 
-    .clear-section .stButton > button:hover {
+    .clear-section .stButton > button:hover,
+    section[data-testid="stSidebar"] .clear-section .stButton > button:hover {
         background: #F3F4F6 !important;
+    }
+
+    /* All sidebar buttons */
+    section[data-testid="stSidebar"] .stButton > button {
+        font-size: 12px !important;
+        border-radius: 6px !important;
+    }
+
+    /* URL section buttons */
+    section[data-testid="stSidebar"] .url-section .stButton > button {
+        width: 100% !important;
+        height: 32px !important;
+        margin-top: 8px !important;
+        background: #D85A30 !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        border-radius: 6px !important;
+        font-size: 12px !important;
+        font-weight: 500 !important;
+    }
+
+    section[data-testid="stSidebar"] .url-section .stButton > button:hover {
+        background: #993C1D !important;
+    }
+
+    /* Sidebar text inputs */
+    section[data-testid="stSidebar"] .stTextInput > div > div > input {
+        width: 100% !important;
+        height: 34px !important;
+        border: 1px solid #D1D5DB !important;
+        border-radius: 6px !important;
+        padding: 0 10px !important;
+        font-size: 12px !important;
+        background: #1C1C1E !important;
+        color: #FFFFFF !important;
+    }
+
+    section[data-testid="stSidebar"] .stTextInput > div > div > input:focus {
+        border-color: #378ADD !important;
     }
 
     /* MAIN AREA - Dark theme */
@@ -551,11 +624,13 @@ st.markdown("""
     }
 
     /* File uploader styling override */
-    .stFileUploader {
+    .stFileUploader,
+    section[data-testid="stSidebar"] .stFileUploader {
         margin: 0 !important;
     }
 
-    .stFileUploader > div {
+    .stFileUploader > div,
+    section[data-testid="stSidebar"] .stFileUploader > div {
         border: none !important;
         padding: 0 !important;
         background: transparent !important;
