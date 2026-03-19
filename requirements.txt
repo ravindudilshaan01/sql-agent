@@ -1,0 +1,7 @@
+langchain
+langchain-groq
+langchain-community
+sqlalchemy
+streamlit
+python-dotenv
+faker
