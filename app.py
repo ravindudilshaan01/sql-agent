@@ -1,407 +1,693 @@
 import streamlit as st
 from agent import ask, get_db_uri
+from langchain_community.utilities import SQLDatabase
 
 # Page config
 st.set_page_config(
     page_title="SQL Chat Agent",
     page_icon="🗄️",
     layout="wide",
-    initial_sidebar_state="expanded",
-    menu_items={
-        'Get Help': 'https://docs.streamlit.io/',
-        'Report a bug': 'https://github.com/ravindudilshaan01/sql-agent',
-        'About': 'SQL Chat Agent with self-healing AI queries'
-    }
+    initial_sidebar_state="expanded"
 )
 
-# Add mobile viewport meta tag
-st.markdown("""
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-""", unsafe_allow_html=True)
-
-# Professional CSS matching the desired layout
+# CSS Variables and Complete Layout Styling
 st.markdown("""
 <style>
-    /* Base styles */
-    .main {
-        background-color: #2D2D30;
+    :root {
+        --color-background-primary: #ffffff;
+        --color-background-secondary: #f8f9fa;
+        --color-text-primary: #1f2937;
+        --color-text-secondary: #6b7280;
+        --color-text-tertiary: #9ca3af;
+        --color-border-primary: #378ADD;
+        --color-border-secondary: #d1d5db;
+        --color-border-tertiary: #e5e7eb;
     }
+
+    /* Hide Streamlit elements */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    .stDeployButton {display: none;}
+
+    /* Reset and base styles */
     .stApp {
-        background-color: #2D2D30;
-    }
-    h1, h2, h3, h4, h5, h6 {
-        color: #ffffff;
-        margin-top: 0;
+        background-color: var(--color-background-primary);
     }
 
-    /* Sidebar styling - compact left panel */
+    .main {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* SIDEBAR STYLING - 260px wide */
     .css-1d391kg {
-        width: 240px !important;
-        min-width: 240px !important;
-        max-width: 240px !important;
-        background-color: #f8f9fa !important;
-        padding: 1rem !important;
+        width: 260px !important;
+        min-width: 260px !important;
+        max-width: 260px !important;
+        padding: 0 !important;
+        background-color: var(--color-background-primary) !important;
     }
 
-    /* Sidebar content styling */
-    .css-1d391kg h4 {
-        color: #333333 !important;
-        font-size: 1rem !important;
-        margin-bottom: 0.5rem !important;
-    }
-
-    .css-1d391kg .stMarkdown {
-        color: #555555 !important;
-        font-size: 0.9rem !important;
-    }
-
-    /* Data source section */
-    .stRadio > div {
-        background-color: transparent !important;
-        border: none !important;
-        padding: 0.5rem 0 !important;
-    }
-
-    .stRadio label {
-        color: #333333 !important;
-        font-size: 0.9rem !important;
-    }
-
-    /* File uploader styling */
-    .stFileUploader {
-        background-color: #ffffff;
-        border: 2px dashed #cccccc;
-        border-radius: 8px;
-        padding: 1rem;
-        text-align: center;
-        margin: 0.5rem 0;
-    }
-
-    /* Connection status badges */
-    .success-badge {
-        background-color: #d4edda;
-        color: #155724;
-        padding: 0.3rem 0.6rem;
-        border-radius: 4px;
-        font-size: 0.8rem;
-        text-align: center;
-        margin: 0.3rem 0;
+    /* Zone 1 - Sidebar Header */
+    .sidebar-header {
+        background: #1E3A5F;
+        height: 60px;
+        padding: 12px 16px;
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
     }
 
-    .connected-dot {
-        width: 6px;
-        height: 6px;
-        background-color: #28a745;
-        border-radius: 50%;
-        margin-right: 6px;
-    }
-
-    /* Tables section */
-    .table-chips {
+    .sidebar-header-left {
         display: flex;
-        flex-wrap: wrap;
-        gap: 0.3rem;
-        margin: 0.5rem 0;
+        align-items: center;
+        gap: 8px;
     }
 
-    .table-chip {
-        background-color: #007bff;
-        color: white;
-        padding: 0.2rem 0.5rem;
-        border-radius: 12px;
-        font-size: 0.75rem;
+    .sidebar-icon {
+        width: 18px;
+        height: 18px;
+        background: #378ADD;
+        border-radius: 4px;
+    }
+
+    .sidebar-title {
+        font-size: 15px;
         font-weight: 500;
+        color: #FFFFFF;
+        margin: 0;
     }
 
-    /* Session statistics */
-    .stats-container {
-        display: flex;
-        gap: 0.5rem;
-        margin: 1rem 0;
+    .version-badge {
+        font-size: 10px;
+        background: #2a4a6f;
+        color: #AACCEE;
+        border-radius: 10px;
+        padding: 2px 8px;
     }
 
-    .stat-box {
-        background-color: #343a40;
-        color: white;
-        padding: 0.8rem;
-        border-radius: 6px;
-        text-align: center;
-        flex: 1;
+    /* Zone 2-8 - Sidebar sections */
+    .sidebar-section {
+        background: var(--color-background-primary);
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--color-border-tertiary);
     }
 
-    .stat-number {
-        font-size: 1.5rem;
-        font-weight: bold;
+    .sidebar-section-label {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--color-text-secondary);
+        margin-bottom: 10px;
         display: block;
     }
 
-    .stat-label {
-        font-size: 0.75rem;
-        opacity: 0.8;
+    /* Radio button styling */
+    .stRadio > div {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        gap: 8px !important;
     }
 
-    /* Main chat area */
-    .stChatMessage {
-        margin: 0.5rem 0;
+    .stRadio label {
+        font-size: 13px !important;
+        color: var(--color-text-primary) !important;
+        font-weight: 400 !important;
+    }
+
+    .stRadio label:has(input:checked) {
+        font-weight: 500 !important;
+    }
+
+    /* File uploader styling */
+    .upload-box {
+        border: 1.5px dashed #7F77DD;
         border-radius: 8px;
-        padding: 1rem;
+        padding: 16px;
+        background: #EEEDFE;
+        text-align: center;
+        margin-top: 8px;
     }
 
-    /* User messages - Blue */
+    .upload-icon {
+        width: 20px;
+        height: 20px;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23534AB7' viewBox='0 0 24 24'%3E%3Cpath d='M12 4l-8 8h5v8h6v-8h5z'/%3E%3C/svg%3E") center/contain no-repeat;
+        margin: 0 auto 8px;
+    }
+
+    .upload-text {
+        font-size: 12px;
+        color: #534AB7;
+        margin-bottom: 4px;
+    }
+
+    .upload-subtext {
+        font-size: 11px;
+        color: #7F77DD;
+    }
+
+    /* Connection status */
+    .connection-status {
+        background: #E1F5EE;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--color-border-tertiary);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .connection-status.error {
+        background: #FCEBEB;
+    }
+
+    .connection-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .connection-dot {
+        width: 7px;
+        height: 7px;
+        background: #0F6E56;
+        border-radius: 50%;
+    }
+
+    .connection-text {
+        font-size: 12px;
+        font-weight: 500;
+        color: #085041;
+    }
+
+    .connection-filename {
+        font-size: 11px;
+        color: #0F6E56;
+        font-family: monospace;
+    }
+
+    /* Tables found pills */
+    .tables-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+    }
+
+    .table-pill {
+        font-size: 11px;
+        padding: 3px 9px;
+        border-radius: 10px;
+        background: #E1F5EE;
+        color: #085041;
+        border: 1px solid #5DCAA5;
+    }
+
+    /* Session stats */
+    .stats-container {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .stat-card {
+        background: var(--color-background-primary);
+        border: 1px solid var(--color-border-tertiary);
+        border-radius: 8px;
+        padding: 8px 10px;
+        flex: 1;
+        text-align: center;
+    }
+
+    .stat-label {
+        font-size: 10px;
+        color: var(--color-text-secondary);
+        display: block;
+    }
+
+    .stat-number {
+        font-size: 22px;
+        font-weight: 500;
+        color: var(--color-text-primary);
+        display: block;
+        margin-top: 2px;
+    }
+
+    .stat-number.amber {
+        color: #854F0B;
+    }
+
+    /* Sidebar buttons */
+    .css-1d391kg .stButton > button {
+        width: 100% !important;
+        height: 34px !important;
+        background: transparent !important;
+        border: 1px solid var(--color-border-secondary) !important;
+        border-radius: 6px !important;
+        font-size: 12px !important;
+        color: var(--color-text-secondary) !important;
+        margin-top: 8px !important;
+    }
+
+    .css-1d391kg .stButton > button:hover {
+        background: var(--color-background-secondary) !important;
+    }
+
+    .css-1d391kg .stButton > button.connect-button {
+        background: #D85A30 !important;
+        color: #FFFFFF !important;
+        border: none !important;
+    }
+
+    /* Clear button at bottom */
+    .clear-section {
+        margin-top: auto;
+        padding: 14px 16px;
+        border-top: 1px solid var(--color-border-tertiary);
+    }
+
+    /* MAIN AREA STYLING */
+    .main-content {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+    }
+
+    /* Zone 9 - Top header */
+    .main-header {
+        background: var(--color-background-primary);
+        height: 52px;
+        padding: 0 24px;
+        border-bottom: 1px solid var(--color-border-tertiary);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .main-title {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--color-text-primary);
+        margin: 0;
+    }
+
+    .main-caption {
+        font-size: 12px;
+        color: var(--color-text-secondary);
+        margin: 2px 0 0 0;
+    }
+
+    /* Zone 10 - Chat area */
+    .chat-container {
+        flex: 1;
+        background: var(--color-background-primary);
+        padding: 20px 24px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    /* Chat messages */
+    .stChatMessage {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* User messages - right aligned */
     .stChatMessage:has([alt="👤"]) {
-        background-color: #007bff !important;
-        color: white !important;
-        margin-left: 2rem;
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-start;
+        gap: 6px;
     }
 
-    .stChatMessage:has([alt="👤"]) .stMarkdown {
-        color: white !important;
+    .stChatMessage:has([alt="👤"]) .stChatMessage-content {
+        background: #1E3A5F;
+        color: #FFFFFF;
+        border-radius: 10px 10px 2px 10px;
+        padding: 9px 13px;
+        max-width: 65%;
+        font-size: 13px;
+        line-height: 1.5;
     }
 
-    /* AI messages - Dark Gray */
+    /* AI messages - left aligned */
     .stChatMessage:has([alt="🤖"]) {
-        background-color: #495057 !important;
-        color: white !important;
-        margin-right: 2rem;
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 6px;
     }
 
-    .stChatMessage:has([alt="🤖"]) .stMarkdown {
-        color: white !important;
+    .stChatMessage:has([alt="🤖"]) .stChatMessage-content {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        max-width: 82%;
     }
 
-    /* SQL query expander */
-    .stExpander {
-        background-color: #6c757d;
+    .ai-bubble {
+        background: var(--color-background-secondary);
+        color: var(--color-text-primary);
+        border-radius: 10px 10px 10px 2px;
+        padding: 9px 13px;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    /* SQL Expander */
+    .sql-expander {
+        border: 1px solid var(--color-border-secondary);
         border-radius: 6px;
-        margin: 0.5rem 0;
+        height: 32px;
+        padding: 0 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        background: var(--color-background-primary);
     }
 
-    .stExpander summary {
-        color: white !important;
-        font-size: 0.9rem !important;
+    .sql-expander-text {
+        font-size: 11px;
+        color: var(--color-text-secondary);
     }
 
     /* Self-heal badge */
     .heal-badge {
-        background-color: #ffc107;
-        color: #212529;
-        padding: 0.25rem 0.5rem;
-        border-radius: 4px;
-        font-size: 0.75rem;
+        background: #FAEEDA;
+        border: 1px solid #EF9F27;
+        border-radius: 6px;
+        padding: 5px 12px;
+        font-size: 11px;
         font-weight: 500;
+        color: #854F0B;
         display: inline-block;
-        margin: 0.25rem 0;
+        margin-top: 4px;
     }
 
-    /* Example buttons at bottom */
-    .example-section {
-        margin: 1rem 0;
-    }
-
-    .example-buttons {
+    /* Zone 11 - Example chips */
+    .example-chips {
+        background: var(--color-background-secondary);
+        height: 44px;
+        padding: 0 24px;
+        border-top: 1px solid var(--color-border-tertiary);
+        border-bottom: 1px solid var(--color-border-tertiary);
         display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
+        align-items: center;
+        gap: 8px;
     }
 
-    .stButton button {
-        background-color: #6c757d !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 6px !important;
-        padding: 0.5rem 1rem !important;
-        font-size: 0.9rem !important;
-        height: auto !important;
-        min-height: 36px !important;
-        transition: all 0.2s ease !important;
+    .chips-label {
+        font-size: 11px;
+        color: var(--color-text-tertiary);
+        margin-right: 4px;
     }
 
-    .stButton button:hover {
-        background-color: #5a6268 !important;
-        transform: translateY(-1px) !important;
+    .chip-button {
+        padding: 5px 12px;
+        border: 1px solid var(--color-border-secondary);
+        border-radius: 20px;
+        background: var(--color-background-primary);
+        font-size: 12px;
+        color: var(--color-text-secondary);
+        cursor: pointer;
+        transition: all 0.2s;
     }
 
-    /* Chat input */
+    .chip-button:hover {
+        background: var(--color-background-secondary);
+        border-color: var(--color-border-primary);
+    }
+
+    /* Zone 12 - Chat input */
+    .chat-input-container {
+        background: var(--color-background-primary);
+        height: 60px;
+        padding: 0 24px;
+        border-top: 1px solid var(--color-border-tertiary);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .stChatInput {
+        flex: 1 !important;
+    }
+
+    .stChatInput > div {
+        border-radius: 20px !important;
+        border: 1px solid var(--color-border-secondary) !important;
+    }
+
     .stChatInput input {
-        border-radius: 25px !important;
-        border: 1px solid #ced4da !important;
-        padding: 0.75rem 1rem !important;
-        font-size: 0.95rem !important;
-        background-color: white !important;
+        height: 40px !important;
+        border: none !important;
+        border-radius: 20px !important;
+        padding: 0 16px !important;
+        font-size: 13px !important;
     }
 
-    /* Main content text */
-    .main .stMarkdown {
-        color: #ffffff;
+    .stChatInput input:focus {
+        border-color: #378ADD !important;
+        box-shadow: 0 0 0 1px #378ADD !important;
     }
 
-    /* Button in sidebar */
-    .css-1d391kg .stButton button {
-        background-color: #007bff !important;
-        color: white !important;
-        width: 100% !important;
-        font-size: 0.85rem !important;
-        padding: 0.5rem !important;
-        margin: 0.25rem 0 !important;
+    .stChatInput input:disabled {
+        background: #f3f4f6 !important;
+        color: var(--color-text-tertiary) !important;
     }
 
-    /* Hide streamlit branding */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
+    /* Text input styling */
+    .stTextInput > div > div > input {
+        height: 34px !important;
+        border: 1px solid var(--color-border-secondary) !important;
+        border-radius: 6px !important;
+        padding: 0 10px !important;
+        font-size: 12px !important;
+    }
+
+    /* File uploader override */
+    .stFileUploader {
+        margin: 8px 0 0 0 !important;
+    }
+
+    .stFileUploader > div {
+        border: none !important;
+        padding: 0 !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# Sidebar - Compact Left Panel
-with st.sidebar:
-    st.markdown("### 🗄️ Data Source")
+# Initialize session state
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+if "last_source" not in st.session_state:
+    st.session_state.last_source = None
+if "prefill" not in st.session_state:
+    st.session_state.prefill = ""
 
-    # Source selector
+# Sidebar Layout
+with st.sidebar:
+    # Zone 1 - Header
+    st.markdown("""
+    <div class="sidebar-header">
+        <div class="sidebar-header-left">
+            <div class="sidebar-icon"></div>
+            <h4 class="sidebar-title">SQL Chat Agent</h4>
+        </div>
+        <div class="version-badge">v1.0</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Zone 2 - Data source selector
+    st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
+    st.markdown('<span class="sidebar-section-label">Data source</span>', unsafe_allow_html=True)
+
     source = st.radio(
         "Choose your database:",
         options=["demo", "upload", "url"],
         format_func=lambda x: {
-            "demo": "📦 Demo Shop DB",
-            "upload": "📤 Upload File",
-            "url": "🔗 Remote URL"
+            "demo": "Use sample shop database",
+            "upload": "Upload my own file (.db or .csv)",
+            "url": "Connect via database URL"
         }[x],
         label_visibility="collapsed"
     )
+    st.markdown('</div>', unsafe_allow_html=True)
 
     db_uri = None
     uploaded_file = None
+    table_names = []
 
-    # Database connection handling
-    if source == "demo":
-        st.markdown('<div class="success-badge"><span class="connected-dot"></span>Connected</div>', unsafe_allow_html=True)
-        db_uri = "sqlite:///shop.db"
+    # Zone 3 - File uploader (conditional)
+    if source == "upload":
+        st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
+        st.markdown('<span class="sidebar-section-label">Upload file</span>', unsafe_allow_html=True)
 
-        # Tables found section
-        st.markdown("**Tables Found:**")
-        st.markdown('<div class="table-chips"><span class="table-chip">customers</span><span class="table-chip">products</span><span class="table-chip">orders</span></div>', unsafe_allow_html=True)
-
-    elif source == "upload":
         uploaded_file = st.file_uploader(
-            "Drop files here",
+            "Upload file",
             type=["db", "csv"],
             label_visibility="collapsed"
         )
+
         if uploaded_file:
             db_uri = get_db_uri("upload", uploaded_file)
-            st.markdown('<div class="success-badge"><span class="connected-dot"></span>Connected</div>', unsafe_allow_html=True)
-
-            # Show uploaded file info
             file_name = uploaded_file.name
-            table_name = file_name.split('.')[0].replace(" ", "_").lower()
-            st.markdown("**Tables Found:**")
-            st.markdown(f'<div class="table-chips"><span class="table-chip">{table_name}</span></div>', unsafe_allow_html=True)
+            table_names = [file_name.split('.')[0].replace(" ", "_").lower()]
 
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # Zone 4 - URL input (conditional)
     elif source == "url":
+        st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
+        st.markdown('<span class="sidebar-section-label">Database URL</span>', unsafe_allow_html=True)
+
         url_input = st.text_input(
             "Database URL",
-            placeholder="postgresql://user:pass@host/db",
+            placeholder="sqlite:///mydb.db",
             label_visibility="collapsed"
         )
-        if url_input:
+
+        connect_clicked = st.button("Connect", use_container_width=True)
+
+        if url_input and connect_clicked:
             db_uri = url_input
-            st.markdown('<div class="success-badge"><span class="connected-dot"></span>Connected</div>', unsafe_allow_html=True)
+            try:
+                db = SQLDatabase.from_uri(db_uri)
+                table_names = db.get_usable_table_names()
+            except:
+                table_names = []
 
-    st.markdown("---")
+        st.markdown('</div>', unsafe_allow_html=True)
 
-    # Session statistics
-    st.markdown("**Session Stats:**")
-    if "messages" in st.session_state:
-        questions = len([m for m in st.session_state.messages if m["role"] == "user"])
-        healed = len([m for m in st.session_state.messages if m["role"] == "assistant" and m.get("attempts", 1) > 1])
-    else:
-        questions = healed = 0
+    # Demo database setup
+    elif source == "demo":
+        db_uri = "sqlite:///shop.db"
+        table_names = ["customers", "products", "orders"]
 
-    # Stats display
-    st.markdown(f'''
-    <div class="stats-container">
-        <div class="stat-box">
-            <span class="stat-number">{questions}</span>
-            <span class="stat-label">Questions</span>
+    # Zone 5 - Connection status
+    if db_uri:
+        connection_class = "connection-status"
+        if source == "demo":
+            filename = "shop.db"
+        elif source == "upload" and uploaded_file:
+            filename = uploaded_file.name
+        elif source == "url":
+            filename = url_input.split("/")[-1] if url_input else ""
+        else:
+            filename = ""
+
+        st.markdown(f"""
+        <div class="{connection_class}">
+            <div class="connection-row">
+                <div class="connection-dot"></div>
+                <span class="connection-text">Connected</span>
+            </div>
+            <div class="connection-filename">{filename}</div>
         </div>
-        <div class="stat-box">
-            <span class="stat-number">{healed}</span>
+        """, unsafe_allow_html=True)
+
+    # Zone 6 - Tables found
+    if table_names:
+        st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
+        st.markdown('<span class="sidebar-section-label">Tables found</span>', unsafe_allow_html=True)
+
+        pills_html = ''.join([f'<span class="table-pill">{table}</span>' for table in table_names])
+        st.markdown(f'<div class="tables-pills">{pills_html}</div>', unsafe_allow_html=True)
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # Zone 7 - Session stats
+    st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
+    st.markdown('<span class="sidebar-section-label">Session</span>', unsafe_allow_html=True)
+
+    questions_count = len([m for m in st.session_state.messages if m["role"] == "user"])
+    heals_count = len([m for m in st.session_state.messages if m["role"] == "assistant" and m.get("attempts", 1) > 1])
+
+    st.markdown(f"""
+    <div class="stats-container">
+        <div class="stat-card">
+            <span class="stat-label">Questions asked</span>
+            <span class="stat-number">{questions_count}</span>
+        </div>
+        <div class="stat-card">
             <span class="stat-label">Self-heals</span>
+            <span class="stat-number amber">{heals_count}</span>
         </div>
     </div>
-    ''', unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
-    st.markdown("---")
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    # Example buttons
-    if db_uri:
-        st.markdown("**Try Examples:**")
-        example_questions = [
-            "How many customers?",
-            "Top 5 products?",
-            "Total revenue?"
-        ]
-
-        for question in example_questions:
-            if st.button(question, key=f"sidebar_{question}", use_container_width=True):
-                st.session_state.example_clicked = question
-
-# Main Chat Area
-# Initialize session state
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-if "last_source" not in st.session_state:
-    st.session_state.last_source = None
+    # Zone 8 - Clear chat button (at bottom)
+    st.markdown('<div style="flex: 1;"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="clear-section">', unsafe_allow_html=True)
+    if st.button("Clear conversation", use_container_width=True):
+        st.session_state.messages = []
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # Clear chat when switching sources
 if source != st.session_state.last_source:
     st.session_state.messages = []
     st.session_state.last_source = source
 
+# Main Content Layout
+st.markdown('<div class="main-content">', unsafe_allow_html=True)
+
+# Zone 9 - Main header
+st.markdown("""
+<div class="main-header">
+    <h1 class="main-title">Ask your database anything</h1>
+    <p class="main-caption">Self-healing SQL agent · LangChain + Groq</p>
+</div>
+""", unsafe_allow_html=True)
+
+# Zone 10 - Chat messages area
+st.markdown('<div class="chat-container">', unsafe_allow_html=True)
+
 # Display chat messages
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"], avatar="👤" if msg["role"] == "user" else "🤖"):
-        st.markdown(msg["content"])
+        if msg["role"] == "user":
+            st.markdown(f'<div class="stChatMessage-content">{msg["content"]}</div>', unsafe_allow_html=True)
+        else:
+            st.markdown(f'<div class="ai-bubble">{msg["content"]}</div>', unsafe_allow_html=True)
 
-        if msg["role"] == "assistant":
-            # SQL chip (expandable)
+            # SQL expander
             if msg.get("sql"):
                 with st.expander("🔍 View SQL query"):
                     st.code(msg["sql"], language="sql")
 
-            # Self-heal badge (only if attempts > 1)
+            # Self-heal badge
             if msg.get("attempts", 1) > 1:
-                st.markdown(f'<div class="heal-badge">⚡ Self-healed · {msg["attempts"]} attempts</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="heal-badge">⚡ self-healed · {msg["attempts"]} attempts</div>', unsafe_allow_html=True)
 
-# Example question buttons (only show if demo database and no chat history)
-if source == "demo" and len(st.session_state.messages) == 0:
-    st.markdown('<div class="example-section">', unsafe_allow_html=True)
-    st.markdown("**💡 Try These Examples:**")
+st.markdown('</div>', unsafe_allow_html=True)
 
-    example_questions = [
-        "How many customers do we have?",
-        "Top 5 most expensive products",
-        "Which city has most customers?",
-        "Total revenue from orders"
-    ]
+# Zone 11 - Example question chips
+if db_uri and len(st.session_state.messages) == 0:
+    example_questions = ["How many customers?", "Top 5 products?", "Total revenue?"]
 
-    # Create columns for examples
-    cols = st.columns(len(example_questions))
+    cols = st.columns([1] + [2] * len(example_questions) + [1])
+    with cols[0]:
+        st.markdown('<span class="chips-label">Try:</span>', unsafe_allow_html=True)
+
     for i, question in enumerate(example_questions):
-        with cols[i]:
-            if st.button(question, key=f"example_{i}"):
-                st.session_state.example_clicked = question
+        with cols[i + 1]:
+            if st.button(question, key=f"chip_{i}", use_container_width=True):
+                st.session_state.prefill = question
+                st.rerun()
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# Handle example clicks
-if "example_clicked" in st.session_state:
-    prompt = st.session_state.example_clicked
-    del st.session_state.example_clicked
+# Handle prefilled questions
+if st.session_state.prefill and db_uri:
+    prompt = st.session_state.prefill
+    st.session_state.prefill = ""
 
     # Add user message
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -419,7 +705,7 @@ if "example_clicked" in st.session_state:
     })
     st.rerun()
 
-# Chat input
+# Zone 12 - Chat input
 if db_uri:
     if prompt := st.chat_input("Ask a question about your data..."):
         # Add user message
@@ -432,16 +718,14 @@ if db_uri:
             with st.spinner("🔮 Analyzing and generating SQL..."):
                 result = ask(prompt, db_uri)
 
-            st.markdown(result["answer"])
+            st.markdown(f'<div class="ai-bubble">{result["answer"]}</div>', unsafe_allow_html=True)
 
-            # SQL chip
             if result.get("sql"):
                 with st.expander("🔍 View SQL query"):
                     st.code(result["sql"], language="sql")
 
-            # Self-heal badge
             if result.get("attempts", 1) > 1:
-                st.markdown(f'<div class="heal-badge">⚡ Self-healed · {result["attempts"]} attempts</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="heal-badge">⚡ self-healed · {result["attempts"]} attempts</div>', unsafe_allow_html=True)
 
         # Save to session
         st.session_state.messages.append({
@@ -451,8 +735,6 @@ if db_uri:
             "attempts": result.get("attempts", 1)
         })
 else:
-    st.markdown("### 👋 Welcome to SQL Chat Agent")
-    st.markdown("**Connect to a database in the sidebar to start chatting**")
-    st.markdown("- 📦 Use the demo database for instant access")
-    st.markdown("- 📤 Upload your own CSV or SQLite files")
-    st.markdown("- 🔗 Connect to remote databases via URL")
+    st.chat_input("Set up a data source on the left first...", disabled=True)
+
+st.markdown('</div>', unsafe_allow_html=True)
