@@ -13,10 +13,10 @@ st.set_page_config(
 st.markdown("""
 <style>
     .main {
-        background-color: #434E78;
+        background-color: #050E3C;
     }
     .stApp {
-        background-color: #434E78;
+        background-color: #050E3C;
     }
     .main-header {
         font-size: 2.5rem;
