@@ -19,17 +19,18 @@ st.markdown("""
         background-color: #050E3C;
     }
     .main-header {
-        font-size: 2.5rem;
+        font-size: 3rem;
         font-weight: 700;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 0.3rem;
+        color: #ffffff;
+        text-align: center;
+        margin: 2rem 0;
+        padding: 1rem 0;
     }
     .sub-header {
         color: #e0e0e0;
-        font-size: 1rem;
-        margin-bottom: 2.5rem;
+        font-size: 1.1rem;
+        text-align: center;
+        margin-bottom: 3rem;
     }
     h4 {
         color: #ffffff;
@@ -38,7 +39,7 @@ st.markdown("""
         width: 100%;
         border-radius: 12px;
         height: 48px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-color: #667eea;
         color: white;
         border: none;
         font-weight: 500;
@@ -46,13 +47,13 @@ st.markdown("""
         transition: all 0.3s ease;
     }
     .stButton>button:hover {
-        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        background-color: #5a6fd8;
         box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
         transform: translateY(-2px);
         border: none;
     }
     div[data-testid="stMetric"] {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-color: #667eea;
         padding: 1rem;
         border-radius: 10px;
         color: white;
@@ -81,7 +82,7 @@ st.markdown("""
         background-color: transparent;
     }
     .stTabs [aria-selected="true"] {
-        background-color: rgba(102, 126, 234, 0.3);
+        background-color: #667eea;
         color: white;
     }
     .element-container {
