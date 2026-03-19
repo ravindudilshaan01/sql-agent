@@ -36,15 +36,19 @@ st.markdown("""
     }
     .stButton>button {
         width: 100%;
-        border-radius: 8px;
-        height: 45px;
+        border-radius: 12px;
+        height: 48px;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         border: none;
         font-weight: 500;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
     }
     .stButton>button:hover {
         background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        transform: translateY(-2px);
         border: none;
     }
     div[data-testid="stMetric"] {
@@ -52,6 +56,7 @@ st.markdown("""
         padding: 1rem;
         border-radius: 10px;
         color: white;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
     }
     div[data-testid="stMetric"] label {
         color: white !important;
@@ -85,9 +90,38 @@ st.markdown("""
     p, .stMarkdown {
         color: #e0e0e0;
     }
+    /* User messages - Blue gradient */
+    .stChatMessage[data-testid="user-message"] {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        border-radius: 15px;
+        padding: 1rem;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+    /* Assistant messages - Purple gradient */
+    .stChatMessage[data-testid="assistant-message"] {
+        background: linear-gradient(135deg, #6b21a8 0%, #a855f7 100%);
+        border-radius: 15px;
+        padding: 1rem;
+        box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    }
+    /* Alternative: Target by position */
+    div[data-testid="stChatMessageContent"] {
+        color: #ffffff !important;
+    }
+    /* Style for user avatar messages */
+    .stChatMessage:has([alt="👤"]) {
+        background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%) !important;
+        border-left: 4px solid #60a5fa;
+    }
+    /* Style for assistant avatar messages */
+    .stChatMessage:has([alt="🤖"]) {
+        background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%) !important;
+        border-left: 4px solid #c084fc;
+    }
     .stChatMessage {
-        background-color: rgba(255, 255, 255, 0.05);
-        border-radius: 10px;
+        margin: 0.5rem 0;
+        border-radius: 15px;
+        padding: 1rem;
     }
 </style>
 """, unsafe_allow_html=True)
