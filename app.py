@@ -10,21 +10,24 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Complete CSS Implementation based on JSON specification
+# Complete CSS Implementation based on comprehensive JSON specification
 st.markdown("""
 <style>
+    /* Import Inter font */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
     /* Hide Streamlit elements */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
     .stDeployButton {display: none;}
 
-    /* Force sidebar to always be visible and expanded */
+    /* Force sidebar to always be visible */
     section[data-testid="stSidebar"] {
         display: block !important;
         visibility: visible !important;
-        width: 260px !important;
-        min-width: 260px !important;
+        width: 300px !important;
+        min-width: 300px !important;
         transform: none !important;
         margin-left: 0 !important;
     }
@@ -34,10 +37,10 @@ st.markdown("""
         display: none !important;
     }
 
-    /* App layout - sidebar + main */
+    /* App layout */
     .stApp {
         background-color: #0E1117;
-        font-family: sans-serif;
+        font-family: 'Inter', sans-serif;
     }
 
     .main {
@@ -46,13 +49,17 @@ st.markdown("""
         background-color: #0E1117;
     }
 
-    /* SIDEBAR - 260px wide, light theme - Updated selectors */
-    .css-1d391kg, .css-1cypcdb, .css-17eq0hr, .css-1544g2n, section[data-testid="stSidebar"] {
-        width: 260px !important;
-        min-width: 260px !important;
-        max-width: 260px !important;
-        background-color: #F0F2F6 !important;
-        border-right: 1px solid #E0E0E0 !important;
+    /* SIDEBAR - 300px wide, dark theme */
+    .css-1d391kg,
+    .css-1cypcdb,
+    .css-17eq0hr,
+    .css-1544g2n,
+    section[data-testid="stSidebar"] {
+        width: 300px !important;
+        min-width: 300px !important;
+        max-width: 300px !important;
+        background-color: #161920 !important;
+        border-right: 1px solid rgba(255,255,255,0.08) !important;
         padding: 0 !important;
         display: flex !important;
         flex-direction: column !important;
@@ -60,44 +67,38 @@ st.markdown("""
         height: 100vh !important;
     }
 
-    /* Force sidebar visibility */
     section[data-testid="stSidebar"] > div {
-        background-color: #F0F2F6 !important;
-        width: 260px !important;
-        min-width: 260px !important;
-        max-width: 260px !important;
-    }
-
-    /* Ensure sidebar container is visible */
-    .css-1cypcdb, .css-17eq0hr, .css-1544g2n {
-        background: #F0F2F6 !important;
-        border-right: 1px solid #E0E0E0 !important;
+        background-color: #161920 !important;
+        width: 300px !important;
+        min-width: 300px !important;
+        max-width: 300px !important;
     }
 
     /* Zone 1 - Sidebar Header */
     .sidebar-header {
         background: #1E3A5F;
-        height: 60px;
-        padding: 12px 16px;
+        height: 64px;
+        padding: 0 16px;
         display: flex;
         align-items: center;
         justify-content: space-between;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
-    .sidebar-header-content {
+    .logo-row {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
     }
 
-    .sidebar-icon {
-        width: 18px;
-        height: 18px;
+    .icon-box {
+        width: 28px;
+        height: 28px;
         background: #378ADD;
-        border-radius: 4px;
+        border-radius: 6px;
     }
 
-    .sidebar-title {
+    .app-title {
         font-size: 15px;
         font-weight: 500;
         color: #FFFFFF;
@@ -106,40 +107,41 @@ st.markdown("""
 
     .version-badge {
         font-size: 10px;
+        font-weight: 500;
         color: #AACCEE;
-        background: #2A4A6F;
+        background: #2a4a6f;
         border-radius: 10px;
         padding: 2px 8px;
     }
 
     /* Sidebar sections */
     .sidebar-section {
-        background: #FFFFFF;
+        background: #161920;
         padding: 14px 16px;
-        border-bottom: 1px solid #E0E0E0;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
     }
 
     .section-label {
         font-size: 11px;
         font-weight: 500;
-        color: #6B7280;
-        margin-bottom: 10px;
+        color: #A0A8B8;
+        margin-bottom: 12px;
         display: block;
     }
 
-    /* Zone 2 - Radio buttons */
+    /* Radio buttons */
     .stRadio > div,
     section[data-testid="stSidebar"] .stRadio > div {
         background: transparent !important;
         border: none !important;
         padding: 0 !important;
-        gap: 8px !important;
+        gap: 10px !important;
     }
 
     .stRadio label,
     section[data-testid="stSidebar"] .stRadio label {
         font-size: 13px !important;
-        color: #111827 !important;
+        color: #FAFAFA !important;
         font-weight: 400 !important;
         display: flex !important;
         align-items: center !important;
@@ -150,20 +152,22 @@ st.markdown("""
         font-weight: 500 !important;
     }
 
-    /* Zone 3 - File uploader */
+    /* File uploader */
     .upload-zone {
         border: 1.5px dashed #7F77DD;
         border-radius: 8px;
-        padding: 16px;
-        background: #EEEDFE;
-        text-align: center;
+        background: rgba(83,74,183,0.08);
+        padding: 18px 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
         margin-top: 8px;
     }
 
     .upload-icon {
         width: 20px;
         height: 20px;
-        margin: 0 auto 6px;
         background: #534AB7;
         -webkit-clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
         clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
@@ -172,7 +176,7 @@ st.markdown("""
     .upload-primary {
         font-size: 12px;
         color: #534AB7;
-        margin-bottom: 3px;
+        font-weight: 500;
     }
 
     .upload-secondary {
@@ -180,16 +184,16 @@ st.markdown("""
         color: #7F77DD;
     }
 
-    /* Zone 4 - URL input */
+    /* URL input section */
     .url-section .stTextInput > div > div > input {
         width: 100% !important;
-        height: 34px !important;
-        border: 1px solid #D1D5DB !important;
+        height: 36px !important;
+        border: 1px solid rgba(255,255,255,0.12) !important;
         border-radius: 6px !important;
-        padding: 0 10px !important;
+        padding: 0 12px !important;
         font-size: 12px !important;
-        background: #1C1C1E !important;
-        color: #FFFFFF !important;
+        background: #21252D !important;
+        color: #FAFAFA !important;
     }
 
     .url-section .stTextInput > div > div > input:focus {
@@ -198,7 +202,7 @@ st.markdown("""
 
     .url-section .stButton > button {
         width: 100% !important;
-        height: 32px !important;
+        height: 34px !important;
         margin-top: 8px !important;
         background: #D85A30 !important;
         color: #FFFFFF !important;
@@ -212,60 +216,52 @@ st.markdown("""
         background: #993C1D !important;
     }
 
-    /* Zone 5 - Connection status */
+    /* Connection status */
     .connection-status {
-        background: #E1F5EE;
+        background: rgba(15,110,86,0.15);
         padding: 12px 16px;
-        border-bottom: 1px solid #E0E0E0;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
     }
 
     .connection-status.error {
-        background: #FCEBEB;
+        background: rgba(226,75,74,0.12);
     }
 
-    .connection-row {
+    .status-row {
         display: flex;
         align-items: center;
         gap: 6px;
     }
 
-    .connection-dot {
-        width: 7px;
-        height: 7px;
-        background: #0F6E56;
+    .status-dot {
+        width: 8px;
+        height: 8px;
         border-radius: 50%;
+        background: #0F6E56;
     }
 
-    .connection-text {
+    .status-dot.error {
+        background: #E24B4A;
+    }
+
+    .status-text {
         font-size: 12px;
         font-weight: 500;
-        color: #085041;
+        color: #5DCAA5;
     }
 
-    .connection-filename {
+    .status-text.error {
+        color: #F09595;
+    }
+
+    .status-filename {
         font-size: 11px;
         font-family: monospace;
         color: #0F6E56;
+        margin-top: 4px;
     }
 
-    .progress-bar {
-        width: 100%;
-        height: 3px;
-        background: #5DCAA5;
-        border-radius: 2px;
-        margin-top: 8px;
-    }
-
-    /* Zone 6 - Table pills */
-    .tables-section {
-        background: #FFFFFF;
-        padding: 14px 16px;
-        border-bottom: 1px solid #E0E0E0;
-    }
-
+    /* Table pills */
     .tables-pills {
         display: flex;
         flex-wrap: wrap;
@@ -275,57 +271,53 @@ st.markdown("""
 
     .table-pill {
         font-size: 11px;
-        padding: 3px 9px;
+        padding: 3px 10px;
         border-radius: 10px;
-        background: #E1F5EE;
-        color: #085041;
-        border: 1px solid #5DCAA5;
+        background: rgba(15,110,86,0.15);
+        color: #5DCAA5;
+        border: 1px solid rgba(93,202,165,0.3);
     }
 
-    /* Zone 7 - Session stats */
-    .stats-section {
-        background: #F3F4F6;
-        padding: 14px 16px;
-        border-bottom: 1px solid #E0E0E0;
-    }
-
-    .stats-cards {
+    /* Session stats */
+    .stats-row {
         display: flex;
         gap: 8px;
         margin-top: 10px;
     }
 
-    .stat-card {
-        background: #1C1C1E;
+    .metric-card {
+        background: #21252D;
+        border: 1px solid rgba(255,255,255,0.08);
         border-radius: 8px;
-        padding: 8px 10px;
-        width: 50%;
+        padding: 10px 12px;
+        flex: 1;
         text-align: center;
     }
 
-    .stat-label {
+    .metric-label {
         font-size: 10px;
-        color: #9CA3AF;
+        color: #A0A8B8;
         display: block;
+        margin-bottom: 4px;
     }
 
-    .stat-value {
-        font-size: 22px;
+    .metric-value {
+        font-size: 24px;
         font-weight: 500;
-        color: #FFFFFF;
+        color: #FAFAFA;
         display: block;
-        margin-top: 2px;
     }
 
-    .stat-value.amber {
-        color: #EF9F27;
+    .metric-value.amber {
+        color: #BA7517;
     }
 
-    /* Zone 8 - Clear button */
+    /* Clear button */
     .clear-section {
         margin-top: auto;
         padding: 14px 16px;
-        border-top: 1px solid #E0E0E0;
+        border-top: 1px solid rgba(255,255,255,0.08);
+        background: #161920;
     }
 
     .clear-section .stButton > button,
@@ -333,70 +325,25 @@ st.markdown("""
         width: 100% !important;
         height: 34px !important;
         background: transparent !important;
-        border: 1px solid #D1D5DB !important;
+        color: #A0A8B8 !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
         border-radius: 6px !important;
         font-size: 12px !important;
-        color: #6B7280 !important;
+        font-weight: 400 !important;
     }
 
     .clear-section .stButton > button:hover,
     section[data-testid="stSidebar"] .clear-section .stButton > button:hover {
-        background: #F3F4F6 !important;
+        background: rgba(255,255,255,0.05) !important;
     }
 
-    /* All sidebar buttons */
-    section[data-testid="stSidebar"] .stButton > button {
-        font-size: 12px !important;
-        border-radius: 6px !important;
-    }
-
-    /* URL section buttons */
-    section[data-testid="stSidebar"] .url-section .stButton > button {
-        width: 100% !important;
-        height: 32px !important;
-        margin-top: 8px !important;
-        background: #D85A30 !important;
-        color: #FFFFFF !important;
-        border: none !important;
-        border-radius: 6px !important;
-        font-size: 12px !important;
-        font-weight: 500 !important;
-    }
-
-    section[data-testid="stSidebar"] .url-section .stButton > button:hover {
-        background: #993C1D !important;
-    }
-
-    /* Sidebar text inputs */
-    section[data-testid="stSidebar"] .stTextInput > div > div > input {
-        width: 100% !important;
-        height: 34px !important;
-        border: 1px solid #D1D5DB !important;
-        border-radius: 6px !important;
-        padding: 0 10px !important;
-        font-size: 12px !important;
-        background: #1C1C1E !important;
-        color: #FFFFFF !important;
-    }
-
-    section[data-testid="stSidebar"] .stTextInput > div > div > input:focus {
-        border-color: #378ADD !important;
-    }
-
-    /* MAIN AREA - Dark theme */
-    .main-content {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        background: #0E1117;
-    }
-
-    /* Zone 9 - Main header */
+    /* MAIN AREA */
+    /* Zone 9 - Top header */
     .main-header {
-        background: #0E1117;
-        height: 52px;
+        background: #161920;
+        height: 56px;
         padding: 0 24px;
-        border-bottom: 1px solid #2A2A2A;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -405,25 +352,27 @@ st.markdown("""
     .main-title {
         font-size: 16px;
         font-weight: 500;
-        color: #FFFFFF;
+        color: #FAFAFA;
+        line-height: 1.2;
         margin: 0;
     }
 
     .main-caption {
         font-size: 12px;
-        color: #6B7280;
-        margin: 2px 0 0 0;
+        font-weight: 400;
+        color: #A0A8B8;
+        margin: 3px 0 0 0;
     }
 
     /* Zone 10 - Chat messages */
     .chat-container {
         flex: 1;
         background: #0E1117;
-        padding: 20px 24px;
+        padding: 24px 24px 16px 24px;
         overflow-y: auto;
         display: flex;
         flex-direction: column;
-        gap: 20px;
+        gap: 24px;
     }
 
     .stChatMessage {
@@ -431,185 +380,173 @@ st.markdown("""
         background: transparent !important;
         padding: 0 !important;
         margin: 0 !important;
-        display: flex !important;
-        align-items: flex-start !important;
-        gap: 6px !important;
     }
 
-    /* User messages - right aligned */
+    /* User messages */
     .stChatMessage:has([alt="👤"]) {
+        display: flex !important;
         justify-content: flex-end !important;
+        align-items: flex-end !important;
+        gap: 8px !important;
         flex-direction: row-reverse !important;
     }
 
     .stChatMessage:has([alt="👤"]) .stChatMessage-content {
+        max-width: 65% !important;
         background: #1E3A5F !important;
         color: #FFFFFF !important;
-        border-radius: 10px 10px 2px 10px !important;
-        padding: 9px 13px !important;
-        max-width: 65% !important;
+        border-radius: 12px 12px 2px 12px !important;
+        padding: 10px 14px !important;
         font-size: 13px !important;
         line-height: 1.5 !important;
     }
 
-    /* User avatar */
     .stChatMessage:has([alt="👤"]) img {
         width: 28px !important;
         height: 28px !important;
         border-radius: 50% !important;
         background: #1E3A5F !important;
+        flex-shrink: 0 !important;
     }
 
-    /* AI messages - left aligned */
+    /* AI messages */
     .stChatMessage:has([alt="🤖"]) {
-        justify-content: flex-start !important;
-    }
-
-    .stChatMessage:has([alt="🤖"]) .stChatMessage-content {
         display: flex !important;
-        flex-direction: column !important;
-        gap: 6px !important;
-        max-width: 82% !important;
+        justify-content: flex-start !important;
+        align-items: flex-start !important;
+        gap: 8px !important;
     }
 
-    /* AI avatar */
     .stChatMessage:has([alt="🤖"]) img {
         width: 28px !important;
         height: 28px !important;
         border-radius: 50% !important;
-        background: #EEEDFE !important;
+        background: rgba(83,74,183,0.2) !important;
+        flex-shrink: 0 !important;
     }
 
-    /* AI bubble */
+    .ai-content-column {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        max-width: 82%;
+    }
+
     .ai-bubble {
-        background: #1E1E1E;
-        color: #FFFFFF;
-        border-radius: 10px 10px 10px 2px;
-        padding: 9px 13px;
+        background: #21252D;
+        color: #FAFAFA;
+        border-radius: 2px 12px 12px 12px;
+        padding: 10px 14px;
         font-size: 13px;
         line-height: 1.5;
+        width: 100%;
     }
 
     /* SQL Expander */
     .stExpander {
-        border: 1px solid #2A2A2A !important;
-        border-radius: 6px !important;
-        background: #1A1A1A !important;
+        background: #21252D !important;
+        border: 1px solid rgba(255,255,255,0.08) !important;
+        border-radius: 8px !important;
         margin: 0 !important;
     }
 
     .stExpander summary {
-        height: 32px !important;
-        padding: 0 12px !important;
-        color: #6B7280 !important;
+        height: 36px !important;
+        padding: 0 14px !important;
+        color: #A0A8B8 !important;
         font-size: 11px !important;
         display: flex !important;
         align-items: center !important;
         justify-content: space-between !important;
+        background: #21252D !important;
     }
 
     .stExpander .stCodeBlock {
-        background: #1A1A1A !important;
-        font-size: 12px !important;
+        background: #161920 !important;
+        border-radius: 0 0 8px 8px !important;
+        padding: 12px 14px !important;
+    }
+
+    .stExpander .stCodeBlock code {
         font-family: monospace !important;
+        font-size: 12px !important;
+        color: #5DCAA5 !important;
+        line-height: 1.6 !important;
     }
 
     /* Self-heal badge */
-    .heal-badge {
-        background: #FAEEDA;
-        border: 1px solid #EF9F27;
-        border-radius: 6px;
-        padding: 5px 12px;
+    .selfheal-badge {
+        background: rgba(186,117,23,0.12);
+        border: 1px solid rgba(239,159,39,0.4);
+        border-radius: 8px;
+        padding: 6px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         font-size: 11px;
         font-weight: 500;
-        color: #854F0B;
-        display: inline-block;
-        margin-top: 4px;
+        color: #BA7517;
     }
 
     /* Zone 11 - Example chips */
     .chips-row {
-        background: #16161A;
-        height: 44px;
+        background: #161920;
+        height: 48px;
         padding: 0 24px;
-        border-top: 1px solid #2A2A2A;
-        border-bottom: 1px solid #2A2A2A;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .chips-label {
-        font-size: 11px;
-        color: #6B7280;
-        margin-right: 4px;
-    }
-
-    .chip-button {
-        padding: 5px 12px;
-        border: 1px solid #2A2A2A;
-        border-radius: 20px;
-        background: #1A1A1A;
-        font-size: 12px;
-        color: #9CA3AF;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .chip-button:hover {
-        background: #2A2A2A;
-        border-color: #4A4A4A;
-    }
-
-    .chips-row .stButton > button {
-        padding: 5px 12px !important;
-        border: 1px solid #2A2A2A !important;
-        border-radius: 20px !important;
-        background: #1A1A1A !important;
-        font-size: 12px !important;
-        color: #9CA3AF !important;
-        height: auto !important;
-        min-height: auto !important;
-    }
-
-    .chips-row .stButton > button:hover {
-        background: #2A2A2A !important;
-        border-color: #4A4A4A !important;
-    }
-
-    /* Zone 12 - Chat input */
-    .chat-input-row {
-        background: #0E1117;
-        height: 60px;
-        padding: 0 24px;
-        border-top: 1px solid #2A2A2A;
+        border-top: 1px solid rgba(255,255,255,0.08);
+        border-bottom: 1px solid rgba(255,255,255,0.08);
         display: flex;
         align-items: center;
         gap: 10px;
     }
 
+    .try-label {
+        font-size: 11px;
+        color: #606880;
+        margin-right: 4px;
+        flex-shrink: 0;
+    }
+
+    .chips-row .stButton > button {
+        padding: 5px 14px !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        border-radius: 20px !important;
+        background: transparent !important;
+        font-size: 12px !important;
+        color: #A0A8B8 !important;
+        height: auto !important;
+        min-height: auto !important;
+        cursor: pointer !important;
+    }
+
+    .chips-row .stButton > button:hover {
+        background: rgba(255,255,255,0.05) !important;
+        border-color: rgba(255,255,255,0.2) !important;
+    }
+
+    /* Zone 12 - Chat input */
     .stChatInput {
         flex: 1 !important;
     }
 
     .stChatInput > div {
-        border: 1px solid #2A2A2A !important;
-        border-radius: 20px !important;
-        background: #1A1A1A !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        border-radius: 21px !important;
+        background: #21252D !important;
     }
 
     .stChatInput input {
-        height: 40px !important;
+        height: 42px !important;
         border: none !important;
-        border-radius: 20px !important;
-        padding: 0 16px !important;
+        border-radius: 21px !important;
+        padding: 0 18px !important;
         font-size: 13px !important;
-        background: #1A1A1A !important;
-        color: #FFFFFF !important;
+        background: #21252D !important;
+        color: #FAFAFA !important;
     }
 
     .stChatInput input::placeholder {
-        color: #4B4B4B !important;
+        color: #4A5060 !important;
     }
 
     .stChatInput input:focus {
@@ -619,11 +556,11 @@ st.markdown("""
     }
 
     .stChatInput input:disabled {
-        opacity: 0.4 !important;
-        pointer-events: none !important;
+        opacity: 0.5 !important;
+        cursor: not-allowed !important;
     }
 
-    /* File uploader styling override */
+    /* File uploader override */
     .stFileUploader,
     section[data-testid="stSidebar"] .stFileUploader {
         margin: 0 !important;
@@ -636,7 +573,7 @@ st.markdown("""
         background: transparent !important;
     }
 
-    /* Welcome message styling */
+    /* Welcome area */
     .welcome-area {
         flex: 1;
         display: flex;
@@ -644,53 +581,54 @@ st.markdown("""
         justify-content: center;
         align-items: center;
         text-align: center;
-        color: #FFFFFF;
         padding: 40px;
     }
 
     .welcome-title {
-        font-size: 24px;
+        font-size: 20px;
         font-weight: 500;
-        margin-bottom: 16px;
-        color: #FFFFFF;
+        color: #FAFAFA;
+        margin-bottom: 12px;
     }
 
     .welcome-subtitle {
-        font-size: 16px;
-        color: #6B7280;
-        margin-bottom: 32px;
+        font-size: 14px;
+        color: #A0A8B8;
+        margin-bottom: 24px;
     }
 
     .welcome-steps {
         display: flex;
         flex-direction: column;
-        gap: 12px;
-        font-size: 14px;
-        color: #9CA3AF;
+        gap: 8px;
+        font-size: 13px;
+        color: #606880;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Initialize session state
+# Initialize session state based on JSON specification
 if "messages" not in st.session_state:
     st.session_state.messages = []
+if "question_count" not in st.session_state:
+    st.session_state.question_count = 0
+if "selfheal_count" not in st.session_state:
+    st.session_state.selfheal_count = 0
 if "last_source" not in st.session_state:
     st.session_state.last_source = None
-if "questions_asked" not in st.session_state:
-    st.session_state.questions_asked = 0
-if "self_heals_triggered" not in st.session_state:
-    st.session_state.self_heals_triggered = 0
 if "prefill" not in st.session_state:
-    st.session_state.prefill = ""
+    st.session_state.prefill = None
+if "db_uri" not in st.session_state:
+    st.session_state.db_uri = None
 
-# Sidebar Layout
+# Sidebar Implementation
 with st.sidebar:
     # Zone 1 - Sidebar Header
     st.markdown("""
     <div class="sidebar-header">
-        <div class="sidebar-header-content">
-            <div class="sidebar-icon"></div>
-            <h4 class="sidebar-title">SQL Chat Agent</h4>
+        <div class="logo-row">
+            <div class="icon-box"></div>
+            <h4 class="app-title">SQL Chat Agent</h4>
         </div>
         <div class="version-badge">v1.0</div>
     </div>
@@ -746,7 +684,7 @@ with st.sidebar:
     # Zone 4 - URL input (conditional)
     elif source == "url":
         st.markdown('<div class="sidebar-section url-section">', unsafe_allow_html=True)
-        st.markdown('<span class="section-label">Or connect URL</span>', unsafe_allow_html=True)
+        st.markdown('<span class="section-label">Database URL</span>', unsafe_allow_html=True)
 
         url_input = st.text_input(
             "Database URL",
@@ -761,7 +699,8 @@ with st.sidebar:
             try:
                 db = SQLDatabase.from_uri(db_uri)
                 table_names = db.get_usable_table_names()
-            except:
+            except Exception as e:
+                st.error(f"Connection failed: {str(e)}")
                 table_names = []
 
         st.markdown('</div>', unsafe_allow_html=True)
@@ -770,6 +709,9 @@ with st.sidebar:
     elif source == "demo":
         db_uri = "sqlite:///shop.db"
         table_names = ["customers", "products", "orders"]
+
+    # Update session state
+    st.session_state.db_uri = db_uri
 
     # Zone 5 - Connection status
     if db_uri:
@@ -780,22 +722,21 @@ with st.sidebar:
         elif source == "url" and url_input:
             filename = url_input.split("/")[-1] if "/" in url_input else url_input
         else:
-            filename = ""
+            filename = "database.db"
 
         st.markdown(f"""
         <div class="connection-status">
-            <div class="connection-row">
-                <div class="connection-dot"></div>
-                <span class="connection-text">Connected</span>
+            <div class="status-row">
+                <div class="status-dot"></div>
+                <span class="status-text">Connected</span>
             </div>
-            <div class="connection-filename">{filename}</div>
-            <div class="progress-bar"></div>
+            <div class="status-filename">{filename}</div>
         </div>
         """, unsafe_allow_html=True)
 
     # Zone 6 - Tables found
     if table_names:
-        st.markdown('<div class="tables-section">', unsafe_allow_html=True)
+        st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
         st.markdown('<span class="section-label">Tables found</span>', unsafe_allow_html=True)
 
         pills_html = ''.join([f'<span class="table-pill">{table}</span>' for table in table_names])
@@ -804,44 +745,43 @@ with st.sidebar:
         st.markdown('</div>', unsafe_allow_html=True)
 
     # Zone 7 - Session stats
-    st.markdown('<div class="stats-section">', unsafe_allow_html=True)
-    st.markdown('<span class="section-label">Session stats</span>', unsafe_allow_html=True)
-
-    questions_count = len([m for m in st.session_state.messages if m["role"] == "user"])
-    heals_count = len([m for m in st.session_state.messages if m["role"] == "assistant" and m.get("attempts", 1) > 1])
+    st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
+    st.markdown('<span class="section-label">Session</span>', unsafe_allow_html=True)
 
     st.markdown(f"""
-    <div class="stats-cards">
-        <div class="stat-card">
-            <span class="stat-label">Questions</span>
-            <span class="stat-value">{questions_count}</span>
+    <div class="stats-row">
+        <div class="metric-card">
+            <span class="metric-label">Questions asked</span>
+            <span class="metric-value">{st.session_state.question_count}</span>
         </div>
-        <div class="stat-card">
-            <span class="stat-label">Self-heals</span>
-            <span class="stat-value amber">{heals_count}</span>
+        <div class="metric-card">
+            <span class="metric-label">Self-heals</span>
+            <span class="metric-value amber">{st.session_state.selfheal_count}</span>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # Zone 8 - Clear chat button (at bottom)
+    # Zone 8 - Clear chat button
     st.markdown('<div class="clear-section">', unsafe_allow_html=True)
     if st.button("Clear conversation", use_container_width=True):
         st.session_state.messages = []
-        st.session_state.questions_asked = 0
-        st.session_state.self_heals_triggered = 0
+        st.session_state.question_count = 0
+        st.session_state.selfheal_count = 0
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
 # Clear chat when switching sources
 if source != st.session_state.last_source:
     st.session_state.messages = []
-    st.session_state.questions_asked = 0
-    st.session_state.self_heals_triggered = 0
+    st.session_state.question_count = 0
+    st.session_state.selfheal_count = 0
     st.session_state.last_source = source
 
-# Zone 9 - Main header
+# Main Area Implementation
+
+# Zone 9 - Top header
 st.markdown("""
 <div class="main-header">
     <h1 class="main-title">Ask your database anything</h1>
@@ -856,6 +796,7 @@ if st.session_state.messages:
             if msg["role"] == "user":
                 st.markdown(msg["content"])
             else:
+                # AI message with structured layout
                 st.markdown(f'<div class="ai-bubble">{msg["content"]}</div>', unsafe_allow_html=True)
 
                 # SQL expander
@@ -865,7 +806,11 @@ if st.session_state.messages:
 
                 # Self-heal badge
                 if msg.get("attempts", 1) > 1:
-                    st.markdown(f'<div class="heal-badge">self-healed · {msg["attempts"]} attempts</div>', unsafe_allow_html=True)
+                    st.markdown(f"""
+                    <div class="selfheal-badge">
+                        self-healed · {msg["attempts"]} attempts
+                    </div>
+                    """, unsafe_allow_html=True)
 else:
     # Welcome message when no chat
     if not db_uri:
@@ -874,33 +819,37 @@ else:
             <h2 class="welcome-title">Welcome to SQL Chat Agent</h2>
             <p class="welcome-subtitle">Connect to a database to start asking questions in natural language</p>
             <div class="welcome-steps">
-                <div>📦 Use the demo database for instant access</div>
+                <div>📦 Use the sample shop database for instant access</div>
                 <div>📤 Upload your own CSV or SQLite files</div>
                 <div>🔗 Connect to remote databases via URL</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-# Zone 11 - Example question chips (only when connected and no messages)
+# Zone 11 - Example chips (only when connected and no messages)
 if db_uri and len(st.session_state.messages) == 0:
-    st.markdown('<div class="chips-row">', unsafe_allow_html=True)
-    st.markdown('<span class="chips-label">Try:</span>', unsafe_allow_html=True)
+    example_chips = [
+        {"label": "How many customers?", "prefill": "How many customers do we have?"},
+        {"label": "Top 5 products?", "prefill": "What are the top 5 most expensive products?"},
+        {"label": "Total revenue?", "prefill": "What is the total revenue from all orders?"}
+    ]
 
-    example_questions = ["How many customers?", "Top 5 products?", "Total revenue?"]
+    cols = [0.5] + [1] * len(example_chips) + [0.5]  # Add padding columns
+    columns = st.columns(cols)
 
-    cols = st.columns(len(example_questions))
-    for i, question in enumerate(example_questions):
-        with cols[i]:
-            if st.button(question, key=f"chip_{i}"):
-                st.session_state.prefill = question
+    with columns[0]:
+        st.markdown('<span class="try-label">Try:</span>', unsafe_allow_html=True)
+
+    for i, chip in enumerate(example_chips):
+        with columns[i + 1]:
+            if st.button(chip["label"], key=f"chip_{i}", use_container_width=True):
+                st.session_state.prefill = chip["prefill"]
                 st.rerun()
-
-    st.markdown('</div>', unsafe_allow_html=True)
 
 # Handle prefilled questions
 if st.session_state.prefill and db_uri:
     prompt = st.session_state.prefill
-    st.session_state.prefill = ""
+    st.session_state.prefill = None
 
     # Add user message
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -910,9 +859,9 @@ if st.session_state.prefill and db_uri:
         result = ask(prompt, db_uri)
 
     # Update counters
-    st.session_state.questions_asked += 1
+    st.session_state.question_count += 1
     if result.get("attempts", 1) > 1:
-        st.session_state.self_heals_triggered += 1
+        st.session_state.selfheal_count += 1
 
     # Add assistant message
     st.session_state.messages.append({
@@ -945,12 +894,16 @@ if prompt := st.chat_input(placeholder_text, disabled=disabled):
                 st.code(result["sql"], language="sql")
 
         if result.get("attempts", 1) > 1:
-            st.markdown(f'<div class="heal-badge">self-healed · {result["attempts"]} attempts</div>', unsafe_allow_html=True)
+            st.markdown(f"""
+            <div class="selfheal-badge">
+                self-healed · {result["attempts"]} attempts
+            </div>
+            """, unsafe_allow_html=True)
 
     # Update counters
-    st.session_state.questions_asked += 1
+    st.session_state.question_count += 1
     if result.get("attempts", 1) > 1:
-        st.session_state.self_heals_triggered += 1
+        st.session_state.selfheal_count += 1
 
     # Save to session
     st.session_state.messages.append({
