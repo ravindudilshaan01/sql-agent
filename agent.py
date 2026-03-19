@@ -1,4 +1,6 @@
 import os
+import sqlite3
+import pandas as pd
 from pathlib import Path
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
@@ -7,7 +9,6 @@ from langchain_community.tools.sql_database.tool import QuerySQLDataBaseTool
 
 load_dotenv()
 
-# Auto-create the database if it doesn't exist
 if not Path("shop.db").exists():
     import create_db
 
@@ -17,12 +18,47 @@ llm = ChatGroq(
     api_key=os.environ.get("GROQ_API_KEY")
 )
 
-def ask(question: str, max_retries: int = 3):
-    """Ask a question in plain English. Returns the answer."""
+def csv_to_sqlite(uploaded_file) -> str:
+    """Convert an uploaded CSV file into a temporary SQLite database."""
+    df = pd.read_csv(uploaded_file)
+    db_path = "user_upload.db"
+    conn = sqlite3.connect(db_path)
+    table_name = Path(uploaded_file.name).stem.replace(" ", "_").lower()
+    df.to_sql(table_name, conn, if_exists="replace", index=False)
+    conn.close()
+    return db_path
 
-    # Re-reads the database structure fresh every single time
-    db = SQLDatabase.from_uri("sqlite:///shop.db")
-    execute_query = QuerySQLDataBaseTool(db=db)
+def get_db_uri(source: str, uploaded_file=None) -> str:
+    """Return the correct database URI based on the source the user picked."""
+    if source == "demo":
+        return "sqlite:///shop.db"
+    elif source == "upload" and uploaded_file:
+        if uploaded_file.name.endswith(".csv"):
+            db_path = csv_to_sqlite(uploaded_file)
+            return f"sqlite:///{db_path}"
+        elif uploaded_file.name.endswith(".db"):
+            db_path = "user_upload.db"
+            with open(db_path, "wb") as f:
+                f.write(uploaded_file.read())
+            return f"sqlite:///{db_path}"
+    elif source == "url":
+        return None  # URL is passed directly
+    return "sqlite:///shop.db"
+
+def ask(question: str, db_uri: str, max_retries: int = 3):
+    """Ask a plain English question against any database URI."""
+
+    try:
+        db = SQLDatabase.from_uri(db_uri)
+        execute_query = QuerySQLDataBaseTool(db=db)
+    except Exception as e:
+        return {
+            "question": question,
+            "sql": "",
+            "raw_result": None,
+            "answer": f"Could not connect to the database. Error: {str(e)}",
+            "attempts": 0
+        }
 
     sql = ""
     error = ""
@@ -96,6 +132,6 @@ Keep it to 2-3 sentences max.
 
 # Quick test
 if __name__ == "__main__":
-    result = ask("How many customers do we have?")
+    result = ask("How many customers do we have?", "sqlite:///shop.db")
     print("Answer:", result["answer"])
     print("SQL used:", result["sql"])
