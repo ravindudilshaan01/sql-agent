@@ -6,12 +6,23 @@ st.set_page_config(
     page_title="SQL Chat Agent",
     page_icon="🗄️",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded",
+    menu_items={
+        'Get Help': 'https://docs.streamlit.io/',
+        'Report a bug': 'https://github.com/ravindudilshaan01/sql-agent',
+        'About': 'SQL Chat Agent with self-healing AI queries'
+    }
 )
 
-# Professional CSS with meaningful colors
+# Add mobile viewport meta tag
+st.markdown("""
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+""", unsafe_allow_html=True)
+
+# Professional Responsive CSS with meaningful colors
 st.markdown("""
 <style>
+    /* Base styles */
     .main {
         background-color: #0F1419;
     }
@@ -23,12 +34,14 @@ st.markdown("""
         font-weight: 600;
         color: #1E3A5F;
         margin: 1rem 0;
+        text-align: center;
     }
     h4 {
         color: #ffffff;
         font-size: 1.1rem;
         font-weight: 500;
     }
+
     /* Brand color buttons - Dark Navy */
     .stButton>button {
         width: 100%;
@@ -39,11 +52,13 @@ st.markdown("""
         border: none;
         font-weight: 500;
         transition: all 0.2s ease;
+        min-height: 44px; /* Touch-friendly */
     }
     .stButton>button:hover {
         background-color: #2A4A70;
         transform: translateY(-1px);
     }
+
     /* Success/Connected states - Teal */
     .success-badge {
         background-color: #E1F5EE;
@@ -52,7 +67,10 @@ st.markdown("""
         border-radius: 6px;
         font-size: 0.9rem;
         font-weight: 500;
+        display: block;
+        text-align: center;
     }
+
     /* AI/LLM related - Purple */
     .ai-badge {
         background-color: #EEEDFE;
@@ -61,7 +79,10 @@ st.markdown("""
         border-radius: 4px;
         font-size: 0.8rem;
         font-weight: 500;
+        display: block;
+        text-align: center;
     }
+
     /* Self-heal warning - Amber */
     .heal-badge {
         background-color: #FAEEDA;
@@ -73,6 +94,7 @@ st.markdown("""
         display: inline-block;
         margin: 0.5rem 0;
     }
+
     /* URL connection - Coral */
     .url-badge {
         background-color: #FAECE7;
@@ -81,13 +103,10 @@ st.markdown("""
         border-radius: 6px;
         font-size: 0.9rem;
         font-weight: 500;
+        display: block;
+        text-align: center;
     }
-    /* Sidebar styling */
-    .css-1d391kg {
-        width: 260px;
-        min-width: 260px;
-        max-width: 260px;
-    }
+
     /* Chat messages */
     .stChatMessage:has([alt="👤"]) {
         background-color: #1E3A5F !important;
@@ -97,6 +116,7 @@ st.markdown("""
         background-color: #534AB7 !important;
         border-left: 3px solid #6B5EC7;
     }
+
     /* Metrics */
     div[data-testid="stMetric"] {
         background-color: #1E3A5F;
@@ -113,12 +133,14 @@ st.markdown("""
         font-size: 1.5rem !important;
         font-weight: 600 !important;
     }
+
     /* Radio buttons */
     .stRadio > div {
         background-color: rgba(255, 255, 255, 0.05);
         border-radius: 8px;
         padding: 1rem;
     }
+
     /* Connected indicator */
     .connected-dot {
         display: inline-block;
@@ -128,6 +150,7 @@ st.markdown("""
         border-radius: 50%;
         margin-right: 8px;
     }
+
     /* Example chips */
     .example-chip {
         background-color: rgba(30, 58, 95, 0.3);
@@ -139,12 +162,152 @@ st.markdown("""
         margin: 0.2rem;
         cursor: pointer;
         transition: all 0.2s ease;
+        min-height: 40px; /* Touch-friendly */
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     .example-chip:hover {
         background-color: #1E3A5F;
     }
+
+    /* Text styling */
     p, .stMarkdown {
         color: #e0e0e0;
+    }
+
+    /* Chat input styling */
+    .stChatInput {
+        margin-top: 1rem;
+    }
+
+    /* RESPONSIVE DESIGN */
+
+    /* Desktop (default) - 260px sidebar */
+    .css-1d391kg {
+        width: 260px;
+        min-width: 260px;
+        max-width: 260px;
+    }
+
+    /* Tablet (768px - 1024px) */
+    @media (max-width: 1024px) and (min-width: 768px) {
+        .css-1d391kg {
+            width: 220px;
+            min-width: 220px;
+            max-width: 220px;
+        }
+        .main-header {
+            font-size: 1.8rem;
+        }
+        .stButton>button {
+            font-size: 0.9rem;
+        }
+    }
+
+    /* Mobile (up to 768px) */
+    @media (max-width: 768px) {
+        /* Sidebar becomes full-width overlay on mobile */
+        .css-1d391kg {
+            width: 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        /* Header adjustments */
+        .main-header {
+            font-size: 1.5rem;
+            margin: 0.5rem 0;
+        }
+
+        /* Button adjustments */
+        .stButton>button {
+            height: 48px; /* Larger touch targets */
+            font-size: 0.95rem;
+        }
+
+        /* Badge adjustments */
+        .success-badge, .url-badge, .ai-badge {
+            font-size: 0.85rem;
+            padding: 0.6rem 1rem;
+        }
+
+        /* Example buttons - stack vertically */
+        .example-chip {
+            width: 100%;
+            margin: 0.3rem 0;
+            min-height: 44px;
+        }
+
+        /* Chat messages - more padding */
+        .stChatMessage {
+            margin: 0.5rem 0;
+        }
+
+        /* Metrics - larger text */
+        div[data-testid="stMetric"] {
+            padding: 1rem;
+        }
+        div[data-testid="stMetric"] label {
+            font-size: 0.9rem !important;
+        }
+        div[data-testid="stMetric"] div {
+            font-size: 1.8rem !important;
+        }
+
+        /* Radio buttons - more padding */
+        .stRadio > div {
+            padding: 1.2rem;
+        }
+
+        /* File uploader adjustments */
+        .stFileUploader {
+            margin: 0.5rem 0;
+        }
+
+        /* Text input adjustments */
+        .stTextInput input {
+            height: 48px;
+            font-size: 16px; /* Prevents zoom on iOS */
+        }
+    }
+
+    /* Small mobile (up to 480px) */
+    @media (max-width: 480px) {
+        .main-header {
+            font-size: 1.3rem;
+        }
+
+        .stButton>button {
+            height: 50px;
+            font-size: 1rem;
+        }
+
+        /* Stack example buttons vertically with spacing */
+        .example-chip {
+            min-height: 48px;
+            margin: 0.4rem 0;
+        }
+
+        /* Larger metrics for readability */
+        div[data-testid="stMetric"] div {
+            font-size: 2rem !important;
+        }
+
+        /* More generous padding */
+        .stRadio > div {
+            padding: 1.5rem 1rem;
+        }
+    }
+
+    /* Print styles */
+    @media print {
+        .css-1d391kg {
+            display: none;
+        }
+        .main-header {
+            color: #000;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -267,11 +430,23 @@ if source == "demo" and len(st.session_state.messages) == 0:
         "Total revenue from orders"
     ]
 
-    cols = st.columns(len(example_questions))
-    for i, question in enumerate(example_questions):
-        with cols[i]:
-            if st.button(question, key=f"example_{i}"):
+    # Responsive layout: columns on desktop, stacked on mobile
+    # Check if we should use mobile layout (this is a simple approach)
+    # On mobile, we'll create single column layout
+    use_mobile_layout = True  # We'll assume mobile-first approach
+
+    if use_mobile_layout:
+        # Mobile layout: stack vertically
+        for i, question in enumerate(example_questions):
+            if st.button(question, key=f"example_{i}", use_container_width=True):
                 st.session_state.example_clicked = question
+    else:
+        # Desktop layout: use columns (fallback)
+        cols = st.columns(len(example_questions))
+        for i, question in enumerate(example_questions):
+            with cols[i]:
+                if st.button(question, key=f"example_{i}"):
+                    st.session_state.example_clicked = question
 
 # Handle example clicks
 if "example_clicked" in st.session_state:
